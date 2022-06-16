@@ -15,10 +15,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
 @property (weak, nonatomic) IBOutlet UIImageView *posterHolder;
 @property (weak, nonatomic) IBOutlet UILabel *overviewLabel;
-@property (weak, nonatomic) NSString *movieTitle;
-@property (weak, nonatomic) NSString *movieOverview;
-@property (weak, nonatomic) NSURL *posterURL;
-@property (weak, nonatomic) NSURL *backdropURL;
+@property (strong, nonatomic) NSString *movieTitle;
+@property (strong, nonatomic) NSString *movieOverview;
+@property (strong, nonatomic) NSURL *posterURL;
+@property (strong, nonatomic) NSURL *backdropURL;
 
 @end
 

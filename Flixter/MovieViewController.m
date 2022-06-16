@@ -10,7 +10,6 @@
 
 @interface MovieViewController ()
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
-@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *loadingIndicator;
 @property (nonatomic, strong) NSArray *movieArray;
 @property (nonatomic, strong) UIRefreshControl *refreshControl;
 @end
@@ -29,7 +28,7 @@
 }
 
 - (void)beginRefresh:(UIRefreshControl *)refreshControl {
-    [self.loadingIndicator startAnimating];
+    [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     NSURL *url = [NSURL URLWithString:@"https://api.themoviedb.org/3/movie/now_playing?api_key=98d749638f0971b6300df0b516a15ed0"];
     NSURLRequest *request = [NSURLRequest requestWithURL:url cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:10.0];
     NSURLSession *session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration] delegate:nil delegateQueue:[NSOperationQueue mainQueue]];
@@ -43,7 +42,7 @@
                [alert addAction:okAction];
                [self presentViewController:alert animated:YES completion:^{
                    [self.refreshControl endRefreshing];
-                   [self.loadingIndicator stopAnimating];
+                   [MBProgressHUD hideHUDForView:self.view animated:YES];
                }];
             }
             else {
@@ -52,9 +51,8 @@
                self.movieArray = dataDictionary[@"results"];
                [self.tableView reloadData];
                 [self.refreshControl endRefreshing];
-                [self.loadingIndicator stopAnimating];
+                [MBProgressHUD hideHUDForView:self.view animated:YES];
             }
-
        }];
     [task resume];
 }
@@ -64,7 +62,7 @@
     cell.titleLabel.text = self.movieArray[indexPath.row][@"original_title"];
     cell.synopsisLabel.text = self.movieArray[indexPath.row][@"overview"];
     
-    NSString *str = @"https://image.tmdb.org/t/p/original/";
+    NSString *str = @"https://image.tmdb.org/t/p/original";
         
     cell.posterURL = [NSURL URLWithString:[str stringByAppendingString:self.movieArray[indexPath.row][@"poster_path"]]];
     

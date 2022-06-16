@@ -9,6 +9,7 @@
 #import "MovieViewCell.h"
 #import "DetailsViewController.h"
 #import "UIImageView+AFNetworking.h"
+#import "MBProgressHUD.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
