@@ -7,11 +7,12 @@
 
 #import <UIKit/UIKit.h>
 #import "MovieViewCell.h"
+#import "DetailsViewController.h"
 #import "UIImageView+AFNetworking.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MovieViewController : UIViewController <UITableViewDataSource>
+@interface MovieViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
 
 @end
 

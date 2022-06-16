@@ -7,6 +7,7 @@ target 'Flixter' do
   
   # Pods for Flixter
   pod "AFNetworking"
+  
   target 'FlixterTests' do
     inherit! :search_paths
     # Pods for testing
