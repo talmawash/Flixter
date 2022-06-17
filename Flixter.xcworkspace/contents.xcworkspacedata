@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:/Users/talm/Desktop/xcode/Flixter/readme.md">
+   </FileRef>
+   <FileRef
       location = "group:Flixter.xcodeproj">
    </FileRef>
    <FileRef
