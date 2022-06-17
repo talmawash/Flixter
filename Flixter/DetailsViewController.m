@@ -20,6 +20,7 @@
     self.overviewLabel.text = self.movieOverview;
     [self.titleLabel sizeToFit];
     [self.overviewLabel sizeToFit];
+    NSLog(@"%@", self.posterURL);
     [self.posterHolder setImageWithURL:self.posterURL];
     [self.backdropHolder setImageWithURL:self.backdropURL];
 }
