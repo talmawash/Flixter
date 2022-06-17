@@ -63,22 +63,27 @@
     cell.titleLabel.text = self.movieArray[indexPath.row][@"original_title"];
     cell.synopsisLabel.text = self.movieArray[indexPath.row][@"overview"];
     
-    NSString *str = @"https://image.tmdb.org/t/p/original";
+    NSString *str = @"https://image.tmdb.org/t/p/w342";
         
     cell.posterURL = [NSURL URLWithString:[str stringByAppendingString:self.movieArray[indexPath.row][@"poster_path"]]];
     
     cell.backdropURL = [NSURL URLWithString:[str stringByAppendingString:self.movieArray[indexPath.row][@"backdrop_path"]]];
     
-//    if (!(self.movieArray[indexPath.row][@"image"])) {
-//        NSData * imageData = [[NSData alloc] initWithContentsOfURL: url];
-//        UIImage *image = [UIImage imageWithData: imageData];
-//        self.movieArray[indexPath.row][@"image"] = image;
-//    }
-    
-//    [cell.posterImage setImage:self.movieArray[indexPath.row][@"image"]];
-    
-    [cell.posterImage setImageWithURL:cell.posterURL];
-    
+    NSURLRequest *posterReq = [NSURLRequest requestWithURL:cell.posterURL];
+    [cell.posterImage setImageWithURLRequest:posterReq placeholderImage:nil success:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nullable response, UIImage * _Nonnull image) {
+        if (response) {
+            cell.posterImage.alpha = 0.0;
+            cell.posterImage.image = image;
+            [UIView animateWithDuration:1 animations:^{
+                cell.posterImage.alpha = 1;
+            }];
+        }
+        else {
+            cell.posterImage.image = image;
+        }
+    } failure:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nullable response, NSError * _Nonnull error) {
+        
+    }];
     
     return  cell;
 }
@@ -97,8 +102,9 @@
     MovieViewCell *cell = sender;
     destination.movieTitle = cell.titleLabel.text;
     destination.movieOverview = cell.synopsisLabel.text;
-    destination.posterURL = cell.posterURL;
-    destination.backdropURL = cell.backdropURL;
+    NSInteger indexPathR = [self.tableView indexPathForCell:cell].row;
+    destination.posterPath = self.movieArray[indexPathR][@"poster_path"];
+    destination.backdropPath = self.movieArray[indexPathR][@"backdrop_path"];
 }
 
 

@@ -79,11 +79,9 @@ static NSString * const reuseIdentifier = @"MovieCollectionViewCell";
     MovieCollectionViewCell *cell = sender;
     destination.movieTitle = cell.arrayEntry[@"title"];
     destination.movieOverview = cell.arrayEntry[@"overview"];
-    NSString *str = @"https://image.tmdb.org/t/p/original";
-        
-    destination.posterURL = [NSURL URLWithString:[str stringByAppendingString:cell.arrayEntry[@"poster_path"]]];
-    NSLog(@"%@", [str stringByAppendingString:cell.arrayEntry[@"poster_path"]]);
-    destination.backdropURL = [NSURL URLWithString:[str stringByAppendingString:cell.arrayEntry[@"backdrop_path"]]];
+
+    destination.posterPath = cell.arrayEntry[@"poster_path"];
+    destination.backdropPath = cell.arrayEntry[@"backdrop_path"];
     
 }
 
@@ -103,13 +101,28 @@ static NSString * const reuseIdentifier = @"MovieCollectionViewCell";
     MovieCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:reuseIdentifier forIndexPath:indexPath];
     
     // Configure the cell
-    NSString *str = @"https://image.tmdb.org/t/p/w92";
+    NSString *str = @"https://image.tmdb.org/t/p/w154";
         
     NSURL *URL = [NSURL URLWithString:[str stringByAppendingString:self.movieArray[indexPath.row][@"poster_path"]]];
     
     cell.arrayEntry = self.movieArray[indexPath.row];
     
-    [cell.posterHolder setImageWithURL: URL];
+    NSURLRequest *posterReq = [NSURLRequest requestWithURL:URL];
+    [cell.posterHolder setImageWithURLRequest:posterReq placeholderImage:nil success:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nullable response, UIImage * _Nonnull image) {
+        if (response) {
+            cell.posterHolder.alpha = 0.0;
+            cell.posterHolder.image = image;
+            [UIView animateWithDuration:1 animations:^{
+                cell.posterHolder.alpha = 1;
+            }];
+        }
+        else {
+            cell.posterHolder.image = image;
+        }
+    } failure:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nullable response, NSError * _Nonnull error) {
+        
+    }];
+    
     
     return cell;
 }

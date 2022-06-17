@@ -17,8 +17,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (weak, nonatomic) IBOutlet UILabel *overviewLabel;
 @property (strong, nonatomic) NSString *movieTitle;
 @property (strong, nonatomic) NSString *movieOverview;
-@property (strong, nonatomic) NSURL *posterURL;
-@property (strong, nonatomic) NSURL *backdropURL;
+@property (strong, nonatomic) NSString *posterPath;
+@property (strong, nonatomic) NSString *backdropPath;
 
 @end
 
