@@ -9,6 +9,7 @@
 
 @interface MoviesCollectionViewController ()
 @property (nonatomic, strong) NSArray *movieArray;
+@property (nonatomic, strong) NSArray *filteredArray;
 @property (nonatomic, strong) UIRefreshControl *refreshControl;
 
 @end
@@ -25,7 +26,6 @@ static NSString * const reuseIdentifier = @"MovieCollectionViewCell";
     
     // Register cell classes
 //    [self.collectionView registerClass:[MovieCollectionViewCell class] forCellWithReuseIdentifier:reuseIdentifier];
-    
     
     
     self.refreshControl = [[UIRefreshControl alloc] init];
@@ -59,6 +59,7 @@ static NSString * const reuseIdentifier = @"MovieCollectionViewCell";
                NSDictionary *dataDictionary = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
                
                self.movieArray = dataDictionary[@"results"];
+                self.filteredArray = self.movieArray;
                [self.collectionView reloadData];
                 [self.refreshControl endRefreshing];
                 [MBProgressHUD hideHUDForView:self.view animated:YES];
@@ -66,6 +67,21 @@ static NSString * const reuseIdentifier = @"MovieCollectionViewCell";
        }];
     [task resume];
 }
+
+//- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
+//    if (searchText.length > 0) {
+//        NSPredicate *predicate = [NSPredicate predicateWithBlock:^BOOL(id  _Nullable evaluatedObject, NSDictionary<NSString *,id> * _Nullable bindings) {
+//            return [evaluatedObject[@"title"] containsString:searchText];
+//        }];
+//        self.filteredArray = [self.movieArray filteredArrayUsingPredicate:predicate];
+//    }
+//    else {
+//        self.filteredArray = self.movieArray;
+//    }
+//
+//    [self.collectionView reloadData];
+//}
+
 
 
 
@@ -94,7 +110,7 @@ static NSString * const reuseIdentifier = @"MovieCollectionViewCell";
 
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-    return self.movieArray.count;
+    return self.filteredArray.count;
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
@@ -105,7 +121,7 @@ static NSString * const reuseIdentifier = @"MovieCollectionViewCell";
         
     NSURL *URL = [NSURL URLWithString:[str stringByAppendingString:self.movieArray[indexPath.row][@"poster_path"]]];
     
-    cell.arrayEntry = self.movieArray[indexPath.row];
+    cell.arrayEntry = self.filteredArray[indexPath.row];
     
     NSURLRequest *posterReq = [NSURLRequest requestWithURL:URL];
     [cell.posterHolder setImageWithURLRequest:posterReq placeholderImage:nil success:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nullable response, UIImage * _Nonnull image) {

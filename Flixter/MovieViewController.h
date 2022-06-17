@@ -13,7 +13,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MovieViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
+@interface MovieViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate>
 
 @end
 

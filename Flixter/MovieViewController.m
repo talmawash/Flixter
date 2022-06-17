@@ -9,8 +9,10 @@
 
 
 @interface MovieViewController ()
+@property (weak, nonatomic) IBOutlet UISearchBar *movieSearchBar;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (nonatomic, strong) NSArray *movieArray;
+@property (nonatomic, strong) NSArray *filteredArray;
 @property (nonatomic, strong) UIRefreshControl *refreshControl;
 @end
 
@@ -24,6 +26,7 @@
     // Load data from appy
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
+    self.movieSearchBar.delegate = self;
     [self beginRefresh:self.refreshControl];
 }
 
@@ -50,6 +53,7 @@
                NSDictionary *dataDictionary = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
                
                self.movieArray = dataDictionary[@"results"];
+                self.filteredArray = self.movieArray;
                [self.tableView reloadData];
                 [self.refreshControl endRefreshing];
                 [MBProgressHUD hideHUDForView:self.view animated:YES];
@@ -60,14 +64,14 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     MovieViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:@"MovieViewCell" forIndexPath:indexPath];
-    cell.titleLabel.text = self.movieArray[indexPath.row][@"original_title"];
-    cell.synopsisLabel.text = self.movieArray[indexPath.row][@"overview"];
+    cell.titleLabel.text = self.filteredArray[indexPath.row][@"original_title"];
+    cell.synopsisLabel.text = self.filteredArray[indexPath.row][@"overview"];
     
     NSString *str = @"https://image.tmdb.org/t/p/w342";
         
-    cell.posterURL = [NSURL URLWithString:[str stringByAppendingString:self.movieArray[indexPath.row][@"poster_path"]]];
+    cell.posterURL = [NSURL URLWithString:[str stringByAppendingString:self.filteredArray[indexPath.row][@"poster_path"]]];
     
-    cell.backdropURL = [NSURL URLWithString:[str stringByAppendingString:self.movieArray[indexPath.row][@"backdrop_path"]]];
+    cell.backdropURL = [NSURL URLWithString:[str stringByAppendingString:self.filteredArray[indexPath.row][@"backdrop_path"]]];
     
     NSURLRequest *posterReq = [NSURLRequest requestWithURL:cell.posterURL];
     [cell.posterImage setImageWithURLRequest:posterReq placeholderImage:nil success:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nullable response, UIImage * _Nonnull image) {
@@ -89,8 +93,23 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    return self.movieArray.count;
+    return self.filteredArray.count;
 }
+
+- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
+    if (searchText.length > 0) {
+        NSPredicate *predicate = [NSPredicate predicateWithBlock:^BOOL(id  _Nullable evaluatedObject, NSDictionary<NSString *,id> * _Nullable bindings) {
+            return [evaluatedObject[@"title"] containsString:searchText];
+        }];
+        self.filteredArray = [self.movieArray filteredArrayUsingPredicate:predicate];
+    }
+    else {
+        self.filteredArray = self.movieArray;
+    }
+    
+    [self.tableView reloadData];
+}
+
 
 #pragma mark - Navigation
 
@@ -103,8 +122,8 @@
     destination.movieTitle = cell.titleLabel.text;
     destination.movieOverview = cell.synopsisLabel.text;
     NSInteger indexPathR = [self.tableView indexPathForCell:cell].row;
-    destination.posterPath = self.movieArray[indexPathR][@"poster_path"];
-    destination.backdropPath = self.movieArray[indexPathR][@"backdrop_path"];
+    destination.posterPath = self.filteredArray[indexPathR][@"poster_path"];
+    destination.backdropPath = self.filteredArray[indexPathR][@"backdrop_path"];
 }
 
 
