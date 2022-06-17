@@ -36,13 +36,14 @@
 
             if (error != nil) {
                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error" message:@"A network error occured. Please check your internet connection." preferredStyle:UIAlertControllerStyleAlert];
-               UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-                   
+               UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"Retry" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                   [self.refreshControl endRefreshing];
+                   [MBProgressHUD hideHUDForView:self.view animated:YES];
+                   [self beginRefresh:self.refreshControl];
                }];
                [alert addAction:okAction];
                [self presentViewController:alert animated:YES completion:^{
-                   [self.refreshControl endRefreshing];
-                   [MBProgressHUD hideHUDForView:self.view animated:YES];
+
                }];
             }
             else {
